@@ -46,9 +46,10 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
 
 
     } catch (error) {
-   console.log(error)
-   setError("Failed to fetch notes from server");
-      setLoading(false)
+      console.log(error);
+      const backendError = error.response?.data?.message || error.response?.data?.error || "Failed to fetch notes from server";
+      setError(backendError);
+      setLoading(false);
     }
   }
 
