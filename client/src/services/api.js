@@ -23,20 +23,12 @@ export const getCurrentUser = async (dispatch) => {
 // Generate notes
 export const generateNotes = async (data) => {
   try {
-    const user = auth.currentUser;
-
-    if (!user) {
-      throw new Error("User not logged in");
-    }
-
-    const token = await user.getIdToken();
-
     const res = await axios.post(
-      `${API}/api/notes/generate-notes`,
+      `${serverUrl}/api/notes/generate-notes`,
       data,
       {
+        withCredentials: true,
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
         }
       }
@@ -49,6 +41,7 @@ export const generateNotes = async (data) => {
     throw error;
   }
 };
+
 
 
 // Download PDF
