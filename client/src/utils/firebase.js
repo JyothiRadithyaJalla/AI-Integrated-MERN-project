@@ -3,12 +3,12 @@ import { initializeApp } from "firebase/app";
 import {getAuth, GoogleAuthProvider} from "firebase/auth"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDS7f2JLjuR-ZAHYS5yko9D8mBCAngPgJg",
-  authDomain: "exam-helper-68289.firebaseapp.com",
-  projectId: "exam-helper-68289",
-  storageBucket: "exam-helper-68289.firebasestorage.app",
-  messagingSenderId: "198091553006",
-  appId: "1:198091553006:web:cd719d4ee1ebf391139bff"
+  apiKey: "AIzaSyD8DtxxDJ1DrGgEjA30vTxe_-B8Bes7hjk",
+  authDomain: "ai-ecommerce-mern.firebaseapp.com",
+  projectId: "ai-ecommerce-mern",
+  storageBucket: "ai-ecommerce-mern.firebasestorage.app",
+  messagingSenderId: "243338989346",
+  appId: "1:243338989346:web:28bd743942c7975b18df7b"
 };
 
 
