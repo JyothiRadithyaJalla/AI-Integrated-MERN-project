@@ -69,7 +69,8 @@ DIAGRAM RULES:
   - diagram.data MUST be a SINGLE STRING
   - Valid Mermaid syntax only
   - Must start with: graph TD
-  - Wrap EVERY node label in square brackets [ ]
+  - Nodes MUST use the format: ID["Label Text"] (e.g., A["Step 1"] --> B["Step 2"])
+  - Use double quotes inside the brackets for labels.
   - Do NOT use special characters inside labels
 - If INCLUDE DIAGRAM is NO:
   - diagram.data MUST be ""

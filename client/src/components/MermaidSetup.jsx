@@ -3,8 +3,9 @@ import React, { useEffect, useRef } from 'react'
 import mermaid from 'mermaid'
 
 mermaid.initialize({
-    startOnLoad:false,
-    theme:"default"
+    startOnLoad: false,
+    theme: "default",
+    suppressErrorRendering: true
 })
 
 const cleanMermaidChart = (diagram) => {
@@ -14,36 +15,26 @@ const cleanMermaidChart = (diagram) => {
     .replace(/\r\n/g, "\n")
     .trim();
 
-  if (!clean.startsWith("graph")) {
+  // Strip markdown ```mermaid ... ``` blocks
+  if (clean.startsWith('```mermaid')) {
+    clean = clean.replace(/^```mermaid\n?/, '');
+  }
+  if (clean.endsWith('```')) {
+    clean = clean.replace(/```$/, '');
+  }
+  
+  clean = clean.trim();
+
+  // Determine if it already starts with a valid Mermaid keyword
+  const validKeywords = ["graph", "flowchart", "sequenceDiagram", "classDiagram", "stateDiagram", "erDiagram", "gantt", "pie", "journey", "gitGraph", "mindmap", "timeline"];
+  const hasKeyword = validKeywords.some(keyword => clean.startsWith(keyword));
+
+  if (!hasKeyword) {
     clean = `graph TD\n${clean}`;
   }
 
   return clean;
 };
-
-const autoFixNodes = (diagram) => {
-  let index = 0;
-  const used = new Map();
-
-  return diagram.replace(/\[(.*?)\]/g, (match, label) => {
-    // normalize label for key
-    const key = label.trim();
-
-    // reuse same node if label already seen
-    if (used.has(key)) {
-      return used.get(key);
-    }
-
-    index++;
-    const id = `N${index}`;
-    const node = `${id}["${key}"]`;
-
-    used.set(key, node);
-    return node;
-  });
-};
-
-
 
 function MermaidSetup({diagram}) {
 const containerRef = useRef(null)
@@ -59,14 +50,19 @@ useEffect(() => {
           .toString(36)
           .substring(2, 9)}`;
 
-        // ✅ sanitize before render
-        const safeChart = autoFixNodes(cleanMermaidChart(diagram));
+        const safeChart = cleanMermaidChart(diagram);
+        console.log("Rendering Mermaid Chart:", safeChart);
 
         const { svg } = await mermaid.render(uniqueId, safeChart);
 
         containerRef.current.innerHTML = svg;
       } catch (error) {
-        console.error("Mermaid render failed:", error);
+        console.error("Mermaid diagram is invalid:", error);
+        if (containerRef.current) {
+          containerRef.current.innerHTML = `<div class="text-red-500 p-4 border border-red-200 rounded-md bg-red-50 flex items-center gap-2">
+            ⚠️ <span>The AI generated an invalid diagram format. Try regenerating!</span>
+          </div>`;
+        }
       }
     };
 
