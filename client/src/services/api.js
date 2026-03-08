@@ -1,47 +1,82 @@
-import axios from "axios"
-import { serverUrl } from "../App"
-import { setUserData } from "../redux/userSlice"
+import axios from "axios";
+import { serverUrl } from "../App";
+import { setUserData } from "../redux/userSlice";
+import { auth } from "../utils/firebase";
 
+const API = import.meta.env.VITE_BACKEND_URL;
+
+// Get logged-in user
 export const getCurrentUser = async (dispatch) => {
-    try {
-        const result = await axios.get(serverUrl + "/api/user/currentuser" , {withCredentials:true})
-        
-        dispatch(setUserData(result.data))
-    } catch (error) {
-        console.log(error)
+  try {
+    const result = await axios.get(`${serverUrl}/api/user/currentuser`, {
+      withCredentials: true
+    });
+
+    dispatch(setUserData(result.data));
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+// Generate notes
+export const generateNotes = async (data) => {
+  try {
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("User not logged in");
     }
-}
 
-export const generateNotes = async (payload) => {
-    try {
-        const result = await axios.post(serverUrl+ "/api/notes/generate-notes" , payload , {withCredentials:true})
-        console.log(result.data)
-        return result.data
+    const token = await user.getIdToken();
 
-    } catch (error) {
-        console.log(error)
-    }
-}
+    const res = await axios.post(
+      `${API}/api/notes/generate-notes`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
+    return res.data;
+
+  } catch (error) {
+    console.error("Generate notes error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+// Download PDF
 export const downloadPdf = async (result) => {
-    try {
-        const response = await axios.post(serverUrl+ "/api/pdf/generate-pdf" , {result} , {
-            responseType:"blob" , withCredentials:true
-        })
+  try {
+    const response = await axios.post(
+      `${serverUrl}/api/pdf/generate-pdf`,
+      { result },
+      {
+        responseType: "blob",
+        withCredentials: true
+      }
+    );
 
-        const blob = new Blob([response.data], {
+    const blob = new Blob([response.data], {
       type: "application/pdf"
     });
 
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "ExamNotesAI.pdf";
     link.click();
 
     window.URL.revokeObjectURL(url);
-    } catch (error) {
-         throw new Error("PDF download failed");
 
-    }
-}
+  } catch (error) {
+    throw new Error("PDF download failed");
+  }
+};
