@@ -1,6 +1,6 @@
 
 const Gemini_URL = 
-"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent"
 
 export const generateGeminiResponse = async (prompt) => {
 
@@ -49,7 +49,7 @@ export const generateGeminiResponse = async (prompt) => {
 
     } catch (error) {
         console.error("Gemini Fetch Error:", error.message);
-    throw new Error("Gemini API fetch failed");
+    throw new Error(error.message);
     }
    
 }
