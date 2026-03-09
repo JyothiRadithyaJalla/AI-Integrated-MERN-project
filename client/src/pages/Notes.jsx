@@ -87,8 +87,16 @@ function Notes() {
         )}
 
         {error && (
-          <div className="mb-6 text-center text-red-600 font-medium">
-            {error}
+          <div className="mb-6 text-center flex flex-col items-center gap-2">
+            <span className="text-red-600 font-medium">{error}</span>
+            {error.toLowerCase().includes("insufficient credits") && (
+              <button 
+                onClick={() => navigate("/pricing")}
+                className="text-sm text-blue-600 hover:text-blue-800 underline font-semibold transition-colors"
+              >
+                Go to Pricing to get more credits
+              </button>
+            )}
           </div>
         )}
 

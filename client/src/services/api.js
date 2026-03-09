@@ -1,7 +1,7 @@
 import axios from "axios";
 import { serverUrl } from "../App";
 import { setUserData } from "../redux/userSlice";
-import { auth } from "../utils/firebase";
+
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -24,13 +24,10 @@ export const getCurrentUser = async (dispatch) => {
 export const generateNotes = async (data) => {
   try {
     const res = await axios.post(
-      `${serverUrl}/api/notes/generate-notes`,
+      `${API}/api/notes/generate-notes`,
       data,
       {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json"
-        }
+        withCredentials: true
       }
     );
 
